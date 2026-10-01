@@ -1,0 +1,26 @@
+# Node (web, backend)
+node_modules/
+dist/
+coverage/
+*.log
+.env
+!.env.example
+
+# Prisma generated client
+apps/backend/src/generated/
+
+# Flutter (mobile)
+apps/mobile/.dart_tool/
+apps/mobile/.flutter-plugins
+apps/mobile/.flutter-plugins-dependencies
+apps/mobile/.pub-cache/
+apps/mobile/.pub/
+apps/mobile/build/
+apps/mobile/**/android/local.properties
+apps/mobile/**/ios/Flutter/.last_build_id
+
+# Editors / OS
+.idea/
+.vscode/
+*.iml
+.DS_Store

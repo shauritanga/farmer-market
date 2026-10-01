@@ -1,0 +1,550 @@
+// Prisma schema for the Farmer Market platform.
+// Model boundaries follow docs/product/product-spec.md and
+// docs/api/api-boundaries.md — read those before adding fields here.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+// Prisma 7: the connection URL lives in prisma.config.ts (for Migrate) and
+// is passed to PrismaClient via a driver adapter at runtime — see
+// src/prisma/prisma.service.ts.
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// Identity
+// ---------------------------------------------------------------------------
+
+enum Role {
+  FARMER
+  BUYER
+  TRANSPORTER
+  ADMIN
+}
+
+model User {
+  id           String   @id @default(uuid())
+  phoneNumber  String   @unique
+  passwordHash String
+  name         String
+  role         Role
+  isVerified   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  farmerProfile      FarmerProfile?
+  buyerProfile       BuyerProfile?
+  transporterProfile TransporterProfile?
+
+  notifications Notification[]
+
+  @@map("users")
+}
+
+// One row per phone number, upserted on every send-code request. `codeHash`
+// and `proofHash` are HMAC-SHA256 (see PhoneVerificationService) — the raw
+// code/proof are never persisted. `expiresAt` is reused for two different
+// windows over the row's lifecycle: the 5-minute code TTL until `verifiedAt`
+// is set, then a fresh 30-minute proof TTL after — mirrors the sibling
+// RealMoney project's onboarding phone-verification flow exactly.
+model PhoneVerification {
+  phoneNumber String    @id
+  codeHash    String
+  expiresAt   DateTime
+  sentAt      DateTime
+  attempts    Int       @default(0)
+  proofHash   String?
+  verifiedAt  DateTime?
+
+  @@map("phone_verifications")
+}
+
+model FarmerProfile {
+  id     String @id @default(uuid())
+  userId String @unique
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  farms           Farm[]
+  produceListings ProduceListing[]
+  ordersAsFarmer  Order[]          @relation("OrdersAsFarmer")
+  inputOrders     AgroInputOrder[]
+
+  @@map("farmer_profiles")
+}
+
+model BuyerProfile {
+  id           String  @id @default(uuid())
+  userId       String  @unique
+  businessName String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  demands       BuyerDemand[]
+  ordersAsBuyer Order[]       @relation("OrdersAsBuyer")
+
+  @@map("buyer_profiles")
+}
+
+model TransporterProfile {
+  id           String  @id @default(uuid())
+  userId       String  @unique
+  vehicleType  String?
+  vehiclePlate String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  transportJobs TransportJob[]
+
+  @@map("transporter_profiles")
+}
+
+// ---------------------------------------------------------------------------
+// Reference data
+// ---------------------------------------------------------------------------
+
+model Commodity {
+  id   String @id @default(uuid())
+  name String @unique
+  unit String
+
+  crops           Crop[]
+  marketPrices    MarketPrice[]
+  produceListings ProduceListing[]
+  buyerDemands    BuyerDemand[]
+  orders          Order[]
+
+  @@map("commodities")
+}
+
+model Market {
+  id     String @id @default(uuid())
+  name   String
+  region String
+
+  marketPrices MarketPrice[]
+
+  @@unique([name, region])
+  @@map("markets")
+}
+
+// ---------------------------------------------------------------------------
+// Farms & crops
+// ---------------------------------------------------------------------------
+
+model Farm {
+  id           String @id @default(uuid())
+  farmerId     String
+  name         String
+  location     String
+  sizeHectares Float?
+
+  farmer FarmerProfile @relation(fields: [farmerId], references: [id], onDelete: Cascade)
+  crops  Crop[]
+
+  @@index([farmerId])
+  @@map("farms")
+}
+
+model Crop {
+  id                  String    @id @default(uuid())
+  farmId              String
+  commodityId         String
+  plantedArea         Float?
+  expectedHarvestDate DateTime?
+
+  farm      Farm      @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  commodity Commodity @relation(fields: [commodityId], references: [id])
+
+  @@index([farmId])
+  @@map("crops")
+}
+
+// ---------------------------------------------------------------------------
+// Market prices
+// ---------------------------------------------------------------------------
+
+enum PriceType {
+  INDICATIVE
+  REPORTED
+  BUYER_OFFER
+  COMPLETED_TRANSACTION
+}
+
+// A displayed price must always carry this context — see
+// docs/product/product-spec.md §5 (Market Price Model). Never collapse
+// price_type distinctions into a single "price" field upstream.
+model MarketPrice {
+  id          String    @id @default(uuid())
+  commodityId String
+  marketId    String
+  grade       String?
+  price       Decimal
+  currency    String    @default("TZS")
+  unit        String
+  priceType   PriceType
+  source      String
+  recordedAt  DateTime
+
+  commodity Commodity @relation(fields: [commodityId], references: [id])
+  market    Market    @relation(fields: [marketId], references: [id])
+
+  @@index([commodityId, marketId, recordedAt])
+  @@map("market_prices")
+}
+
+// ---------------------------------------------------------------------------
+// Produce listings & buyer demand
+// ---------------------------------------------------------------------------
+
+enum ListingStatus {
+  ACTIVE
+  PAUSED
+  SOLD_OUT
+  CLOSED
+}
+
+model ProduceListing {
+  id                String        @id @default(uuid())
+  farmerId          String
+  commodityId       String
+  quantityAvailable Float
+  unit              String
+  grade             String?
+  location          String
+  availableFrom     DateTime
+  expectedPrice     Decimal?
+  isNegotiable      Boolean       @default(true)
+  status            ListingStatus @default(ACTIVE)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  farmer    FarmerProfile @relation(fields: [farmerId], references: [id], onDelete: Cascade)
+  commodity Commodity     @relation(fields: [commodityId], references: [id])
+  offers    Offer[]
+  orders    Order[]
+
+  @@index([farmerId])
+  @@index([commodityId, status])
+  @@map("produce_listings")
+}
+
+enum DemandStatus {
+  OPEN
+  MATCHED
+  CLOSED
+}
+
+model BuyerDemand {
+  id             String       @id @default(uuid())
+  buyerId        String
+  commodityId    String
+  quantity       Float
+  unit           String
+  grade          String?
+  targetLocation String
+  offerPrice     Decimal?
+  requiredBy     DateTime
+  paymentTerms   String?
+  status         DemandStatus @default(OPEN)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  buyer     BuyerProfile @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+  commodity Commodity    @relation(fields: [commodityId], references: [id])
+  offers    Offer[]
+
+  @@index([buyerId])
+  @@index([commodityId, status])
+  @@map("buyer_demands")
+}
+
+// ---------------------------------------------------------------------------
+// Offers & orders
+// ---------------------------------------------------------------------------
+
+enum OfferStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+}
+
+// An offer responds either to a produce listing or a buyer demand, never
+// both — enforce that invariant in the service layer, not just here.
+model Offer {
+  id               String      @id @default(uuid())
+  produceListingId String?
+  buyerDemandId    String?
+  fromUserId       String
+  toUserId         String
+  quantity         Float
+  price            Decimal
+  status           OfferStatus @default(PENDING)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  produceListing ProduceListing? @relation(fields: [produceListingId], references: [id])
+  buyerDemand    BuyerDemand?    @relation(fields: [buyerDemandId], references: [id])
+  order          Order?
+
+  @@index([produceListingId])
+  @@index([buyerDemandId])
+  @@map("offers")
+}
+
+// Canonical lifecycle from docs/architecture/architecture.md §8. The
+// backend is the source of truth — clients must never manufacture a
+// later status locally.
+enum OrderStatus {
+  CREATED
+  ACCEPTED
+  PREPARING
+  PICKED_UP
+  IN_TRANSIT
+  DELIVERED
+  VERIFIED
+  PAID
+  COMPLETED
+  CANCELLED
+}
+
+model Order {
+  id               String      @id @default(uuid())
+  buyerId          String
+  farmerId         String
+  produceListingId String?
+  offerId          String?     @unique
+  commodityId      String
+  quantity         Float
+  unit             String
+  price            Decimal
+  grade            String?
+  pickupLocation   String
+  deliveryLocation String
+  paymentTerms     String?
+  status           OrderStatus @default(CREATED)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  buyer          BuyerProfile    @relation("OrdersAsBuyer", fields: [buyerId], references: [id])
+  farmer         FarmerProfile   @relation("OrdersAsFarmer", fields: [farmerId], references: [id])
+  produceListing ProduceListing? @relation(fields: [produceListingId], references: [id])
+  offer          Offer?          @relation(fields: [offerId], references: [id])
+  commodity      Commodity       @relation(fields: [commodityId], references: [id])
+
+  statusEvents OrderStatusEvent[]
+  transportJob TransportJob?
+  payment      Payment?
+  transaction  Transaction?
+
+  @@index([buyerId])
+  @@index([farmerId])
+  @@map("orders")
+}
+
+// Status history — never overwrite; append. Powers "what happened when"
+// for trust/transparency (product-spec.md §3).
+model OrderStatusEvent {
+  id        String      @id @default(uuid())
+  orderId   String
+  status    OrderStatus
+  note      String?
+  createdAt DateTime    @default(now())
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@map("order_status_events")
+}
+
+// ---------------------------------------------------------------------------
+// Logistics
+// ---------------------------------------------------------------------------
+
+enum TransportStatus {
+  REQUESTED
+  ASSIGNED
+  PICKED_UP
+  IN_TRANSIT
+  DELIVERED
+  FAILED
+}
+
+model TransportJob {
+  id               String          @id @default(uuid())
+  orderId          String          @unique
+  transporterId    String?
+  cargoDescription String
+  pickupLocation   String
+  destination      String
+  vehicleInfo      String?
+  status           TransportStatus @default(REQUESTED)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  order       Order               @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  transporter TransporterProfile? @relation(fields: [transporterId], references: [id])
+  events      TransportEvent[]
+
+  @@index([transporterId])
+  @@map("transport_jobs")
+}
+
+// Proof/events for pickup and delivery — see api-boundaries.md (Logistics).
+model TransportEvent {
+  id             String          @id @default(uuid())
+  transportJobId String
+  status         TransportStatus
+  proofUrl       String?
+  note           String?
+  createdAt      DateTime        @default(now())
+
+  transportJob TransportJob @relation(fields: [transportJobId], references: [id], onDelete: Cascade)
+
+  @@index([transportJobId])
+  @@map("transport_events")
+}
+
+// ---------------------------------------------------------------------------
+// Payments
+// ---------------------------------------------------------------------------
+
+// Never expose "CONFIRMED" until the payment provider has actually
+// confirmed it — see product-spec.md §11 and api-boundaries.md (Payments).
+enum PaymentStatus {
+  EXPECTED
+  PENDING
+  CONFIRMED
+  FAILED
+  REFUNDED
+  REVERSED
+}
+
+model Payment {
+  id                String        @id @default(uuid())
+  orderId           String        @unique
+  amount            Decimal
+  currency          String        @default("TZS")
+  status            PaymentStatus @default(EXPECTED)
+  provider          String?
+  providerReference String?
+  initiatedAt       DateTime?
+  confirmedAt       DateTime?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+// ---------------------------------------------------------------------------
+// Notifications
+// ---------------------------------------------------------------------------
+
+enum NotificationType {
+  PRICE_ALERT
+  DEMAND_MATCH
+  OFFER_RECEIVED
+  OFFER_ACCEPTED
+  ORDER_UPDATE
+  TRANSPORTER_ASSIGNED
+  PICKUP_CONFIRMED
+  DELIVERY_CONFIRMED
+  PAYMENT_CONFIRMED
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  type      NotificationType
+  title     String
+  body      String
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+  @@map("notifications")
+}
+
+// ---------------------------------------------------------------------------
+// Completed transaction history
+// ---------------------------------------------------------------------------
+
+// A read-optimized receipt created once an Order reaches COMPLETED. Kept
+// distinct from Order so transaction history stays stable/append-only even
+// if the live Order model gains fields later.
+model Transaction {
+  id          String   @id @default(uuid())
+  orderId     String   @unique
+  buyerId     String
+  farmerId    String
+  commodityId String
+  quantity    Float
+  price       Decimal
+  completedAt DateTime @default(now())
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([buyerId])
+  @@index([farmerId])
+  @@map("transactions")
+}
+
+// ---------------------------------------------------------------------------
+// Agricultural inputs (seeds, fertilizer, pesticides, tools...)
+// ---------------------------------------------------------------------------
+
+// Lifecycle of a farmer's input order request: REQUESTED until an
+// admin/supplier confirms stock and delivery, then CONFIRMED → DELIVERED.
+// Stock is decremented on CONFIRMED, never on REQUESTED, so abandoned
+// requests can't drain inventory.
+enum AgroInputOrderStatus {
+  REQUESTED
+  CONFIRMED
+  DELIVERED
+  CANCELLED
+}
+
+model AgroInput {
+  id            String   @id @default(uuid())
+  name          String
+  category      String
+  unit          String
+  price         Decimal
+  currency      String   @default("TZS")
+  stockQuantity Float?
+  supplierName  String?
+  description   String?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  orders AgroInputOrder[]
+
+  @@index([category, isActive])
+  @@map("agro_inputs")
+}
+
+model AgroInputOrder {
+  id        String               @id @default(uuid())
+  farmerId  String
+  inputId   String
+  quantity  Float
+  unitPrice Decimal
+  status    AgroInputOrderStatus @default(REQUESTED)
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+
+  farmer FarmerProfile @relation(fields: [farmerId], references: [id], onDelete: Cascade)
+  input  AgroInput     @relation(fields: [inputId], references: [id])
+
+  @@index([farmerId])
+  @@map("agro_input_orders")
+}

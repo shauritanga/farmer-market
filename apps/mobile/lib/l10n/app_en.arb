@@ -1,0 +1,185 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "Fama",
+
+  "onboardingSkip": "Skip",
+  "onboardingContinue": "Continue",
+  "onboardingGetStarted": "Get Started",
+  "onboardingPage1Title": "Know Your Market",
+  "onboardingPage1Description": "See current prices across markets, compare net value, and decide where to sell with confidence — not guesswork.",
+  "onboardingPage2Title": "Sell With Confidence",
+  "onboardingPage2Description": "List your produce or discover real buyer demand, and agree terms through a clear digital workflow.",
+  "onboardingPage3Title": "Track Every Delivery",
+  "onboardingPage3Description": "Arrange transport, verify pickup and delivery, and get paid — with a record you can trust.",
+
+  "loginTitle": "Sign in",
+  "loginPhoneLabel": "Phone number",
+  "phoneHint": "e.g. 0712345678 or +255712345678",
+  "loginPasswordLabel": "Password",
+  "loginSignInButton": "Sign in",
+  "loginPhoneRequired": "Phone number is required",
+  "loginPasswordRequired": "Password is required",
+  "loginNoAccount": "Don't have an account?",
+  "loginRegisterLink": "Register",
+
+  "commonContinue": "Continue",
+
+  "registerNameTitle": "Your Full Name",
+  "registerNameSubtitle": "Let's start with the name you go by",
+  "registerNameLabel": "Full name",
+  "registerNameRequired": "Full name is required",
+
+  "registerPhoneTitle": "Your Phone Number",
+  "registerPhoneSubtitle": "We'll send you a verification code",
+  "registerSendCodeButton": "Send Code",
+
+  "registerCodeTitle": "Enter Code",
+  "registerCodeSubtitle": "We sent a 6-digit code to {phone}",
+  "@registerCodeSubtitle": {
+    "placeholders": {
+      "phone": { "type": "String" }
+    }
+  },
+  "registerCodeLabel": "Verification code",
+  "registerCodeRequired": "Code is required",
+  "registerVerifyButton": "Verify",
+  "registerResendIn": "Resend in {seconds} seconds",
+  "@registerResendIn": {
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
+  "registerResendCode": "Resend code",
+  "registerDevCodeHint": "Development mode — no SMS was sent. Your code is {code}.",
+  "@registerDevCodeHint": {
+    "placeholders": {
+      "code": { "type": "String" }
+    }
+  },
+
+  "registerPasswordTitle": "Create a Password",
+  "registerPasswordSubtitle": "Secure your account with a password",
+  "registerPasswordMinLength": "Password must be at least 8 characters",
+  "registerContinueButton": "Continue",
+
+  "roleSheetTitle": "Choose Your Role",
+  "roleSheetSubtitle": "This decides what you'll see in the app",
+  "roleSheetLabel": "Role",
+  "roleRequired": "Please select your role",
+  "roleFarmer": "Farmer",
+  "roleBuyer": "Buyer",
+  "roleTransporter": "Transporter",
+  "registerCreateAccountButton": "Create Account",
+
+  "settingsTitle": "Settings",
+  "settingsLanguageLabel": "Language",
+
+  "homeWelcomeTitle": "Welcome, {name}!",
+  "@homeWelcomeTitle": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "homeRoleFarmerMessage": "Market prices, your produce, and orders will show up here soon.",
+  "homeRoleBuyerMessage": "Discover produce and reach farmers here soon.",
+  "homeRoleTransporterMessage": "Transport jobs assigned to you will show up here soon.",
+  "homeSignOutButton": "Sign out",
+  "homeOverviewSubtitle": "Track your market, produce, and orders all in one place.",
+  "homeTopMarketTitle": "Top Market Prices: {market}",
+  "@homeTopMarketTitle": {
+    "placeholders": {
+      "market": { "type": "String" }
+    }
+  },
+
+  "navHome": "Home",
+  "navMarket": "Market",
+  "navProduce": "Produce",
+  "navOrders": "Orders",
+  "navMore": "More",
+
+  "marketPricesTitle": "Market Prices",
+  "marketPricesLoadError": "Couldn't load market prices",
+  "marketPricesEmpty": "No market prices yet",
+  "marketSearchHint": "Search products...",
+  "marketSearchEmpty": "No results",
+
+  "myProduceTitle": "My Produce",
+  "myProduceLoadError": "Couldn't load your produce",
+  "myProduceEmpty": "You haven't listed any produce yet",
+  "produceNegotiable": "Negotiable",
+
+  "myOrdersTitle": "My Orders",
+  "myOrdersLoadError": "Couldn't load orders",
+  "myOrdersEmpty": "You don't have any orders yet",
+
+  "notificationsTitle": "Notifications",
+  "notificationsLoadError": "Couldn't load notifications",
+  "notificationsEmpty": "No notifications",
+
+  "moreNotifications": "Notifications",
+
+  "commonRetry": "Retry",
+  "commonCancel": "Cancel",
+  "commonConfirm": "Confirm",
+
+  "updatedJustNow": "Updated just now",
+  "updatedMinutesAgo": "Updated {count} min ago",
+  "@updatedMinutesAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "updatedHoursAgo": "Updated {count} hr ago",
+  "@updatedHoursAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "updatedDaysAgo": "Updated {count} days ago",
+  "@updatedDaysAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "buyerDemandsTitle": "Buyer Requests",
+  "buyerDemandsSectionTitle": "Buyer requests",
+  "buyerDemandsLoadError": "Couldn't load buyer requests",
+  "buyerDemandsEmpty": "No buyer requests right now",
+  "buyerDemandsViewAll": "View all requests",
+  "buyerRequiredBy": "Needed by {date}",
+  "@buyerRequiredBy": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "buyerPaymentTerms": "Payment: {terms}",
+  "@buyerPaymentTerms": {
+    "placeholders": {
+      "terms": { "type": "String" }
+    }
+  },
+  "moreBuyerDemands": "Buyer Requests",
+
+  "inputsTitle": "Farm Inputs",
+  "inputsSectionTitle": "Farm inputs",
+  "inputsLoadError": "Couldn't load farm inputs",
+  "inputsEmpty": "No farm inputs available",
+  "inputsViewAll": "View all inputs",
+  "inputsOrderButton": "Order",
+  "inputsQuantityLabel": "Quantity",
+  "inputsOrderTitle": "Order {name}",
+  "@inputsOrderTitle": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "inputsOrderSuccess": "Order request sent",
+  "inputsOrderError": "Couldn't place your order",
+  "inputsMyOrdersTitle": "My Input Orders",
+  "inputsMyOrdersEmpty": "You haven't ordered any inputs yet",
+  "inputsOutOfStock": "Out of stock",
+  "moreInputs": "Farm Inputs"
+}

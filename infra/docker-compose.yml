@@ -1,0 +1,24 @@
+name: farmer-market
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: fama
+      POSTGRES_PASSWORD: fama_dev_password
+      POSTGRES_DB: fama
+    ports:
+      # Host port 5433 (not 5432) so this doesn't collide with a
+      # system/other-project Postgres already using 5432.
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fama -d fama"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_data:

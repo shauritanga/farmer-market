@@ -1,0 +1,185 @@
+{
+  "@@locale": "sw",
+
+  "appTitle": "Fama",
+
+  "onboardingSkip": "Ruka",
+  "onboardingContinue": "Endelea",
+  "onboardingGetStarted": "Anza",
+  "onboardingPage1Title": "Fahamu Soko Lako",
+  "onboardingPage1Description": "Ona bei za sasa katika masoko mbalimbali, linganisha thamani halisi, na amua wapi kuuza kwa uhakika — si kubahatisha.",
+  "onboardingPage2Title": "Uza kwa Uhakika",
+  "onboardingPage2Description": "Weka mazao yako au gundua wanunuzi halisi, kisha kubaliana masharti kupitia mchakato safi wa kidijitali.",
+  "onboardingPage3Title": "Fuatilia Kila Usafirishaji",
+  "onboardingPage3Description": "Panga usafiri, thibitisha upokeaji na uwasilishaji, na upokee malipo — na rekodi unayoweza kuiamini.",
+
+  "loginTitle": "Ingia",
+  "loginPhoneLabel": "Nambari ya simu",
+  "phoneHint": "mfano: 0712345678 au +255712345678",
+  "loginPasswordLabel": "Nenosiri",
+  "loginSignInButton": "Ingia",
+  "loginPhoneRequired": "Nambari ya simu inahitajika",
+  "loginPasswordRequired": "Nenosiri linahitajika",
+  "loginNoAccount": "Huna akaunti?",
+  "loginRegisterLink": "Jisajili",
+
+  "commonContinue": "Endelea",
+
+  "registerNameTitle": "Jina Lako Kamili",
+  "registerNameSubtitle": "Tuanze na jina unalotumia kila siku",
+  "registerNameLabel": "Jina kamili",
+  "registerNameRequired": "Jina linahitajika",
+
+  "registerPhoneTitle": "Nambari Yako ya Simu",
+  "registerPhoneSubtitle": "Tutakutumia msimbo wa uthibitisho",
+  "registerSendCodeButton": "Tuma Msimbo",
+
+  "registerCodeTitle": "Weka Msimbo",
+  "registerCodeSubtitle": "Tumetuma msimbo wa tarakimu 6 kwa {phone}",
+  "@registerCodeSubtitle": {
+    "placeholders": {
+      "phone": { "type": "String" }
+    }
+  },
+  "registerCodeLabel": "Msimbo wa uthibitisho",
+  "registerCodeRequired": "Msimbo unahitajika",
+  "registerVerifyButton": "Thibitisha",
+  "registerResendIn": "Tuma tena baada ya sekunde {seconds}",
+  "@registerResendIn": {
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
+  "registerResendCode": "Tuma msimbo tena",
+  "registerDevCodeHint": "Hali ya majaribio — hakuna SMS iliyotumwa. Msimbo wako ni {code}.",
+  "@registerDevCodeHint": {
+    "placeholders": {
+      "code": { "type": "String" }
+    }
+  },
+
+  "registerPasswordTitle": "Unda Nenosiri",
+  "registerPasswordSubtitle": "Linda akaunti yako kwa nenosiri",
+  "registerPasswordMinLength": "Nenosiri lazima liwe angalau herufi 8",
+  "registerContinueButton": "Endelea",
+
+  "roleSheetTitle": "Chagua Jukumu Lako",
+  "roleSheetSubtitle": "Hii itaamua utakachoona kwenye programu",
+  "roleSheetLabel": "Jukumu",
+  "roleRequired": "Tafadhali chagua jukumu lako",
+  "roleFarmer": "Mkulima",
+  "roleBuyer": "Mnunuzi",
+  "roleTransporter": "Msafirishaji",
+  "registerCreateAccountButton": "Fungua Akaunti",
+
+  "settingsTitle": "Mipangilio",
+  "settingsLanguageLabel": "Lugha",
+
+  "homeWelcomeTitle": "Karibu, {name}!",
+  "@homeWelcomeTitle": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "homeRoleFarmerMessage": "Soko za bei, mazao yako, na maagizo yataonekana hapa hivi karibuni.",
+  "homeRoleBuyerMessage": "Gundua mazao na wasiliana na wakulima hapa hivi karibuni.",
+  "homeRoleTransporterMessage": "Kazi za usafirishaji zilizokabidhiwa zitaonekana hapa hivi karibuni.",
+  "homeSignOutButton": "Toka",
+  "homeOverviewSubtitle": "Fuatilia soko, mazao, na maagizo yako yote hapa.",
+  "homeTopMarketTitle": "Bei za Soko Kuu: {market}",
+  "@homeTopMarketTitle": {
+    "placeholders": {
+      "market": { "type": "String" }
+    }
+  },
+
+  "navHome": "Nyumbani",
+  "navMarket": "Soko",
+  "navProduce": "Mazao",
+  "navOrders": "Maagizo",
+  "navMore": "Zaidi",
+
+  "marketPricesTitle": "Bei za Soko",
+  "marketPricesLoadError": "Imeshindwa kupakia bei za soko",
+  "marketPricesEmpty": "Hakuna bei za soko kwa sasa",
+  "marketSearchHint": "Tafuta bidhaa...",
+  "marketSearchEmpty": "Hakuna matokeo",
+
+  "myProduceTitle": "Mazao Yangu",
+  "myProduceLoadError": "Imeshindwa kupakia mazao yako",
+  "myProduceEmpty": "Bado hujaweka mazao yoyote",
+  "produceNegotiable": "Bei inajadiliwa",
+
+  "myOrdersTitle": "Maagizo Yangu",
+  "myOrdersLoadError": "Imeshindwa kupakia maagizo",
+  "myOrdersEmpty": "Bado huna maagizo",
+
+  "notificationsTitle": "Arifa",
+  "notificationsLoadError": "Imeshindwa kupakia arifa",
+  "notificationsEmpty": "Hakuna arifa",
+
+  "moreNotifications": "Arifa",
+
+  "commonRetry": "Jaribu tena",
+  "commonCancel": "Ghairi",
+  "commonConfirm": "Thibitisha",
+
+  "updatedJustNow": "Imesasishwa sasa hivi",
+  "updatedMinutesAgo": "Imesasishwa dakika {count} zilizopita",
+  "@updatedMinutesAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "updatedHoursAgo": "Imesasishwa saa {count} zilizopita",
+  "@updatedHoursAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "updatedDaysAgo": "Imesasishwa siku {count} zilizopita",
+  "@updatedDaysAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "buyerDemandsTitle": "Mahitaji ya Wanunuzi",
+  "buyerDemandsSectionTitle": "Mahitaji ya wanunuzi",
+  "buyerDemandsLoadError": "Imeshindwa kupakia mahitaji ya wanunuzi",
+  "buyerDemandsEmpty": "Hakuna mahitaji ya wanunuzi kwa sasa",
+  "buyerDemandsViewAll": "Ona mahitaji yote",
+  "buyerRequiredBy": "Inahitajika ifikapo {date}",
+  "@buyerRequiredBy": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "buyerPaymentTerms": "Malipo: {terms}",
+  "@buyerPaymentTerms": {
+    "placeholders": {
+      "terms": { "type": "String" }
+    }
+  },
+  "moreBuyerDemands": "Mahitaji ya Wanunuzi",
+
+  "inputsTitle": "Pembejeo za Kilimo",
+  "inputsSectionTitle": "Pembejeo za kilimo",
+  "inputsLoadError": "Imeshindwa kupakia pembejeo",
+  "inputsEmpty": "Hakuna pembejeo kwa sasa",
+  "inputsViewAll": "Ona pembejeo zote",
+  "inputsOrderButton": "Agiza",
+  "inputsQuantityLabel": "Kiasi",
+  "inputsOrderTitle": "Agiza {name}",
+  "@inputsOrderTitle": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "inputsOrderSuccess": "Ombi la kuagiza limetumwa",
+  "inputsOrderError": "Imeshindwa kutuma ombi lako",
+  "inputsMyOrdersTitle": "Maagizo Yangu ya Pembejeo",
+  "inputsMyOrdersEmpty": "Bado hujaagiza pembejeo",
+  "inputsOutOfStock": "Zimekwisha",
+  "moreInputs": "Pembejeo za Kilimo"
+}
